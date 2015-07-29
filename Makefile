@@ -7,7 +7,7 @@ OBJS=testsi.o test1.o snippets.o ConvertUTF.o
 help:
 	@echo This makefile is just for the test program \(use \"make clean all test\"\)
 	@echo Just include the SimpleIni.h header file to use it.
-	
+
 all: $(OBJS)
 	$(CC) -o testsi $(OBJS)
 
