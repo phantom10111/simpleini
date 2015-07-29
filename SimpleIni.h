@@ -321,12 +321,6 @@ public:
             return *this;
         }
 
-#if defined(_MSC_VER) && _MSC_VER <= 1200
-        /** STL of VC6 doesn't allow me to specify my own comparator for list::sort() */
-        bool operator<(const Entry & rhs) const { return LoadOrder()(*this, rhs); }
-        bool operator>(const Entry & rhs) const { return LoadOrder()(rhs, *this); }
-#endif
-
         /** Strict less ordering by name of key only */
         struct KeyOrder : std::binary_function<Entry, Entry, bool> {
             bool operator()(const Entry & lhs, const Entry & rhs) const {
@@ -342,6 +336,16 @@ public:
                     return lhs.nOrder < rhs.nOrder;
                 }
                 return KeyOrder()(lhs.pItem, rhs.pItem);
+            }
+        };
+
+        /** Like LoadOrder, but empty name always goes first */
+        struct LoadOrderEmptyFirst : std::binary_function<Entry, Entry, bool> {
+            bool operator()(const Entry & lhs, const Entry & rhs) const {
+                if (*lhs.pItem == 0 || *rhs.pItem == 0) {
+                    return *lhs.pItem < *rhs.pItem;
+                }
+                return LoadOrder()(lhs, rhs);
             }
         };
     };
@@ -2407,15 +2411,13 @@ CSimpleIniTempl<SI_CHAR,SI_STRLESS,SI_CONVERTER>::Save(
         a_oOutput.Write(SI_UTF8_SIGNATURE);
     }
 
-    // get all of the sections sorted in load order
+    // get all of the sections sorted in load order with root section first
     TNamesDepend oSections;
     GetAllSections(oSections);
-#if defined(_MSC_VER) && _MSC_VER <= 1200
-    oSections.sort();
-#elif defined(__BORLANDC__)
-    oSections.sort(Entry::LoadOrder());
+#if defined(__BORLANDC__)
+    oSections.sort(Entry::LoadOrderEmptyFirst());
 #else
-    oSections.sort(typename Entry::LoadOrder());
+    oSections.sort(typename Entry::LoadOrderEmptyFirst());
 #endif
 
     // write the file comment if we have one
@@ -2462,9 +2464,7 @@ CSimpleIniTempl<SI_CHAR,SI_STRLESS,SI_CONVERTER>::Save(
         // get all of the keys sorted in load order
         TNamesDepend oKeys;
         GetAllKeys(iSection->pItem, oKeys);
-#if defined(_MSC_VER) && _MSC_VER <= 1200
-        oKeys.sort();
-#elif defined(__BORLANDC__)
+#if defined(__BORLANDC__)
         oKeys.sort(Entry::LoadOrder());
 #else
         oKeys.sort(typename Entry::LoadOrder());
