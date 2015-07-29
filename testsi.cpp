@@ -18,12 +18,11 @@
 # include <fstream>
 #endif
 
-//#define SI_CONVERT_GENERIC
 //#define SI_CONVERT_ICU
 //#define SI_CONVERT_WIN32
 #include "SimpleIni.h"
 
-#ifdef SI_CONVERT_ICU
+#if defined(_MSC_VER) && defined(SI_CONVERT_ICU)
 // if converting using ICU then we need the ICU library
 # pragma comment(lib, "icuuc.lib")
 #endif

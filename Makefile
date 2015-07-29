@@ -1,15 +1,14 @@
-CC=g++
-CFLAGS=-Wall
-CPPFLAGS=-Wall
+CXX=g++
+CXXFLAGS=-Wall `pkg-config --cflags icu-uc`
 
-OBJS=testsi.o test1.o snippets.o ConvertUTF.o
+OBJS=testsi.o test1.o snippets.o
 
 help:
 	@echo This makefile is just for the test program \(use \"make clean all test\"\)
 	@echo Just include the SimpleIni.h header file to use it.
 
 all: $(OBJS)
-	$(CC) -o testsi $(OBJS)
+	$(CXX) $(CXXFLAGS) -o testsi $(OBJS) `pkg-config --libs icu-uc`
 
 clean:
 	rm -f core *.o testsi

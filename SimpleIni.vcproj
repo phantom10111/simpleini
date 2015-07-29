@@ -243,16 +243,6 @@
 			</File>
 		</Filter>
 		<Filter
-			Name="Conversion Files"
-			Filter="">
-			<File
-				RelativePath=".\ConvertUTF.c">
-			</File>
-			<File
-				RelativePath=".\ConvertUTF.h">
-			</File>
-		</Filter>
-		<Filter
 			Name="Documentation"
 			Filter="">
 			<File
